@@ -2,7 +2,7 @@
 #include "stm32f3xx.h"
 #include <stdio.h>
 
-uint16_t adc_value;
+int adc_value;
 
 void uart_pin_init(void)
 {
@@ -63,15 +63,15 @@ void uart_init(void)
 	__IO uint32_t tmpreg = RCC->APB1ENR & (~RCC_APB1ENR_USART2EN);
     (void)tmpreg;
 
-
-
 }
 
 void uart_send(void)
 {
-    //formula needed;
-	adc_value = 1000;
+	adc_value = 1;
+
+	// char txt[100] = { 0 };
+
+	// snprintf(txt, sizeof(txt),"voltage = %f\r\n", adc_value);
 
 	fprintf(stderr, "just something = %d  \r\n",adc_value);
-
 }

@@ -1,5 +1,8 @@
 #include "stm32f3xx.h"
 #include "uart_diag.h"
+#include <FreeRTOS.h>
+#include <task.h>
+#include <stdint.h>
 
 static void clock_init(void);
 
@@ -12,9 +15,9 @@ int main()
 
     while(1)
     {
+		
 		myDelay();
 		uart_send();
-	
     }
     return 0;
 }
@@ -22,10 +25,7 @@ int main()
 static void clock_init(void)
 {
 	RCC->CR   |= RCC_CR_HSEON; 				// set HSE ON for external oscilator 8 MHz
-	while((RCC->CR & RCC_CR_HSERDY) == 0u)	// wait 6 cycles to HSE to stabilise
-	{
-
-	}
+	while((RCC->CR & RCC_CR_HSERDY) == 0u) { }	// wait 6 cycles to HSE to stabilise
 
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN ; 	// on 
     __IO uint32_t tmpreg = RCC->AHBENR & (~RCC_AHBENR_GPIOAEN);
@@ -39,16 +39,12 @@ static void clock_init(void)
 	FLASH->ACR|= FLASH_ACR_LATENCY_2;		// Two wait sates, if 48 < HCLK ≤ 72 MHz
 	/*FLASH*/
 
-
     //RCC->CFGR |= RCC_CFGR_PPRE1_2;          // APB1 div 2 - serial works on 9600 
     RCC->CFGR |= RCC_CFGR_PLLMUL9;  		// multiplicator 9 , input 8*9=72MHz
 	RCC->CFGR |= RCC_CFGR_PLLSRC;   		// PLL entry clock source, external selected as PLL input clock
 
 	RCC->CR	  |= RCC_CR_PLLON; 				// start the PLL
-	while((RCC->CR & RCC_CR_PLLRDY) == 0u)	// wait for PLL is ready
-	{
-
-	}
+	while((RCC->CR & RCC_CR_PLLRDY) == 0u) { }	// wait for PLL is ready
 	
 	RCC->CFGR &= ~RCC_CFGR_SW; 				// System clock switch to external
 	RCC->CFGR |= RCC_CFGR_SW_PLL; 			// select PLL as system clock
@@ -63,6 +59,4 @@ void myDelay(void)
 
 	}
 	GPIOA->ODR ^= GPIO_ODR_5; 
-    
-
 }
