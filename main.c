@@ -15,12 +15,11 @@ int main()
     clock_init();
 	uart_init();
 
-	//vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
 
-	// xTaskCreate(task1, "task1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
-	// xTaskCreate(task2, "task2", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
+	xTaskCreate(task1, "task1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
+	xTaskCreate(task2, "task2", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
 	
-	// vTaskStartScheduler();
+	vTaskStartScheduler();
 
     while(1)
     {
@@ -81,6 +80,7 @@ static void task2(void *pvParameters)
 {
 	(void) pvParameters;
 	for ( ; ; ) {
-			uart_send();;
+			uart_send();
+			vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
 	}
 }

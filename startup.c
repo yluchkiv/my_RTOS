@@ -10,6 +10,10 @@ extern uint32_t _data_size;
 extern uint32_t _bss_ram;
 extern uint32_t _bss_size;
 
+void xPortPendSVHandler( void ) __attribute__( ( naked ) );
+void xPortSysTickHandler( void );
+void vPortSVCHandler( void ) __attribute__( ( naked ) );
+
 void init(void)
 {
     volatile uint8_t *ram_ptr = (volatile uint8_t *)&_data_ram; //assigning address of flash to ram
@@ -50,8 +54,7 @@ void nmi(void)
 }
 
 void hardfault(void)
-{
-    while(1)
+{    while(1)
     {
 
     }
@@ -64,7 +67,20 @@ __attribute__((section(".vector_table"))) const uint32_t vector_table[128] =
     (uint32_t)&reset,
     (uint32_t)&nmi,
     (uint32_t)&hardfault,
-    0u
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    (uint32_t)&vPortSVCHandler,
+    0u,
+    0u,
+    (uint32_t)&xPortPendSVHandler,
+    (uint32_t)&xPortSysTickHandler
+
+
 };
 
 void _close(void)
