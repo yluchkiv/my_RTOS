@@ -2,7 +2,7 @@
 #include "stm32f3xx.h"
 #include <stdio.h>
 
-int adc_value;
+float adc_value;
 
 void uart_pin_init(void)
 {
@@ -29,7 +29,7 @@ void uart_pin_init(void)
 
 void uart_setup(void)
 {
-        // Program the M bits in USART_CR1 to define the word length = 8 bit length
+    // Program the M bits in USART_CR1 to define the word length = 8 bit length
 	USART2->CR1 &= ~USART_CR1_M;        
 
 	const uint32_t BAUD = 9600UL;
@@ -67,11 +67,18 @@ void uart_init(void)
 
 void uart_send(void)
 {
-	adc_value++;
+	adc_value = 2.455;  						// just value
 
-	// char txt[100] = { 0 };
+	char txt[100] = { 0 };
 
-	// snprintf(txt, sizeof(txt),"voltage = %f\r\n", adc_value)
+	snprintf(txt, sizeof(txt),"voltage = %f\r\n", adc_value);
 
-	fprintf(stderr, "just something = %d  \r\n",adc_value);
+	//fprintf(stderr, "just something = %d  \r\n",adc_value);
+
+	for(int i = 0; i < sizeof(txt); i++)
+	{
+		USART2->TDR = txt[i];
+		while((USART2->ISR & USART_ISR_TC)==0); //wait for TC 
+	}
+
 }

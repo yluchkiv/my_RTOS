@@ -8,13 +8,12 @@ static void clock_init(void);
 static void task1(void *pvParameters);
 static void task2(void *pvParameters);
 
-void myDelay(void);
+static long counter = 0;
 
 int main()
 {
     clock_init();
 	uart_init();
-
 
 	xTaskCreate(task1, "task1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
 	xTaskCreate(task2, "task2", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
@@ -23,8 +22,6 @@ int main()
 
     while(1)
     {
-		uart_send();
-		myDelay();
 	
     }
     return 0;
@@ -59,18 +56,15 @@ static void clock_init(void)
     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) { } // wait for switch status
 }
 
-void myDelay(void)
-{
-    for(volatile long i = 0; i < 1000000; i++)
-    {
-
-	}
-	GPIOA->ODR ^= GPIO_ODR_5; 
-}
-
 static void task1(void *pvParameters)
 {
 	(void) pvParameters;
+	for(long i = 0;i < 1000000;i++)
+	{
+		//__asm volatile ("cpsid i" : : : "memory"); // Disable IRQ interrupts by setting the I-bit in the CPSR
+		counter++;
+		//__asm volatile ("cpsie i" : : : "memory"); // Enable IRQ interrupts by clearing the I-bit in the CPSR
+	}
 	for ( ; ; ) {
 		vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
 	}
@@ -79,6 +73,13 @@ static void task1(void *pvParameters)
 static void task2(void *pvParameters)
 {
 	(void) pvParameters;
+
+	for(long i = 0;i < 1000000;i++)
+	{
+		//__asm volatile ("cpsid i" : : : "memory"); // Disable IRQ interrupts by setting the I-bit in the CPSR
+		counter++;
+		//__asm volatile ("cpsie i" : : : "memory"); // Enable IRQ interrupts by clearing the I-bit in the CPSR
+	}
 	for ( ; ; ) {
 			uart_send();
 			vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
