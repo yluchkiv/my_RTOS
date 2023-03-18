@@ -67,11 +67,11 @@ void uart_init(void)
 
 void uart_send(void)
 {
-	adc_value = 1;
+	adc_value++;
 
 	// char txt[100] = { 0 };
 
-	// snprintf(txt, sizeof(txt),"voltage = %f\r\n", adc_value);
+	// snprintf(txt, sizeof(txt),"voltage = %f\r\n", adc_value)
 
 	fprintf(stderr, "just something = %d  \r\n",adc_value);
 }

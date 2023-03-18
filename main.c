@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 static void clock_init(void);
+static void task1(void *pvParameters);
+static void task2(void *pvParameters);
 
 void myDelay(void);
 
@@ -13,11 +15,18 @@ int main()
     clock_init();
 	uart_init();
 
+	//vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
+
+	// xTaskCreate(task1, "task1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
+	// xTaskCreate(task2, "task2", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
+	
+	// vTaskStartScheduler();
+
     while(1)
     {
-		
-		myDelay();
 		uart_send();
+		myDelay();
+	
     }
     return 0;
 }
@@ -39,7 +48,6 @@ static void clock_init(void)
 	FLASH->ACR|= FLASH_ACR_LATENCY_2;		// Two wait sates, if 48 < HCLK ≤ 72 MHz
 	/*FLASH*/
 
-    //RCC->CFGR |= RCC_CFGR_PPRE1_2;          // APB1 div 2 - serial works on 9600 
     RCC->CFGR |= RCC_CFGR_PLLMUL9;  		// multiplicator 9 , input 8*9=72MHz
 	RCC->CFGR |= RCC_CFGR_PLLSRC;   		// PLL entry clock source, external selected as PLL input clock
 
@@ -59,4 +67,20 @@ void myDelay(void)
 
 	}
 	GPIOA->ODR ^= GPIO_ODR_5; 
+}
+
+static void task1(void *pvParameters)
+{
+	(void) pvParameters;
+	for ( ; ; ) {
+		vTaskDelay((TickType_t)1000 / portTICK_PERIOD_MS);
+	}
+}
+
+static void task2(void *pvParameters)
+{
+	(void) pvParameters;
+	for ( ; ; ) {
+			uart_send();;
+	}
 }

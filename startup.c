@@ -32,6 +32,7 @@ void init(void)
 void reset(void)  //reset haldler starts and executes init, main functions
 {
     __asm volatile ("bkpt #0");
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
     init();
     main();
     while(1)
