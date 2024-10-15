@@ -12,7 +12,7 @@ static long counter = 0;
 
 int main()
 {
-    clock_init();
+    clock_init(); //adding a new comment
 	uart_init();
 
 	xTaskCreate(task1, "task1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 3, NULL);
